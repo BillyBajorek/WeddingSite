@@ -7,6 +7,8 @@ import { navItems } from "@/content/wedding";
 // app/details/ takes precedence over this route automatically.
 const pages = Object.fromEntries(navItems.map((item) => [item.href.slice(1), item.label]));
 
+export const instant = false;
+
 export function generateStaticParams() {
   return Object.keys(pages).map((slug) => ({ slug }));
 }
