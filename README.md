@@ -24,11 +24,33 @@ Other scripts:
 ## Run it on Replit
 
 1. In Replit, choose **Import from GitHub** (or upload this folder).
-2. Press **Run**. The `.replit` file installs dependencies and starts the dev server on port 4317.
+2. Press **Run**. The `.replit` file starts the dev server on port 5000.
 3. To publish, use **Deploy → Autoscale**. The build and run commands are already configured.
 
-Optionally set `SITE_URL` (e.g. `https://billyandbrenna.com`) in Replit Secrets so link previews
-(when you text the site to someone) use the right domain.
+Replit settings (Tools → Database / Secrets):
+
+| Setting          | What it's for                                                            |
+| ---------------- | ------------------------------------------------------------------------ |
+| PostgreSQL       | Stores the guest list and RSVPs. Replit sets `DATABASE_URL` for you.     |
+| `ADMIN_PASSWORD` | Password for `/rsvp/responses`, where you load guests and read replies.  |
+| `SITE_URL`       | Your public address, e.g. `https://billyandbrenna.com`, for link previews |
+
+### Keeping Replit in sync with GitHub
+
+GitHub is the source of truth. Don't edit or commit code inside Replit; to pick up new changes,
+run this in the Replit Shell:
+
+```bash
+git pull --ff-only && npm install
+```
+
+If Replit ever has commits of its own and the pull refuses, make it an exact copy of GitHub again
+(this discards anything changed inside Replit):
+
+```bash
+git rebase --abort; git merge --abort
+git fetch origin && git reset --hard origin/main && npm install
+```
 
 ## Where things live
 
