@@ -25,9 +25,6 @@ export function Polaroids() {
 
   return (
     <div className="story-media">
-      <div className="story-badge">
-        <span className="dot" aria-hidden="true" /> Since Day One
-      </div>
       {photos.map((photo, i) => {
         const isFront = i === front;
         return (

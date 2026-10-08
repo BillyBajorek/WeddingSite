@@ -136,7 +136,7 @@ export function RsvpFlow() {
               required
             />
           </div>
-          <button className="btn btn-outline" type="submit" disabled={pending}>
+          <button className="btn btn-primary" type="submit" disabled={pending}>
             {pending ? "Searching…" : "Find my invitation"}
           </button>
         </div>
@@ -334,7 +334,7 @@ export function RsvpFlow() {
 
       {error && errorMessage}
       <div className="rsvp-actions">
-        <button className="btn btn-outline" type="submit" disabled={pending}>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? "Sending…" : "Send RSVP"}
         </button>
         <button type="button" className="rsvp-link" onClick={startOver}>

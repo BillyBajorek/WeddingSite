@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { connection } from "next/server";
 import { Suspense } from "react";
+import { PageHero } from "@/components/page-hero";
 import { ImportForm, LoginForm, RemoveButton } from "@/components/rsvp/admin-forms";
 import { mealLabel, meals } from "@/content/rsvp";
 import { ADMIN_PATH, adminConfigured, isAdmin } from "@/lib/admin";
@@ -14,12 +15,14 @@ export const metadata: Metadata = {
 
 export default function ResponsesPage() {
   return (
-    <main id="main" className="rsvp-page" tabIndex={-1}>
-      <div className="card rsvp-card rsvp-card--wide">
-        <h1 className="section-title rsvp-title">Responses</h1>
-        <Suspense fallback={<p className="rsvp-lede">Loading…</p>}>
-          <Responses />
-        </Suspense>
+    <main id="main" tabIndex={-1}>
+      <PageHero title="Responses" eyebrow="For Billy & Brenna" compact />
+      <div className="section section--tight">
+        <div className="panel rsvp-card rsvp-card--wide">
+          <Suspense fallback={<p className="rsvp-lede">Loading…</p>}>
+            <Responses />
+          </Suspense>
+        </div>
       </div>
     </main>
   );

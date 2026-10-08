@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { PageHero } from "@/components/page-hero";
 import { RsvpFlow } from "@/components/rsvp/rsvp-flow";
 
 export const metadata: Metadata = {
@@ -8,10 +9,12 @@ export const metadata: Metadata = {
 
 export default function RsvpPage() {
   return (
-    <main id="main" className="rsvp-page" tabIndex={-1}>
-      <div className="card rsvp-card">
-        <h1 className="section-title rsvp-title">RSVP</h1>
-        <RsvpFlow />
+    <main id="main" tabIndex={-1}>
+      <PageHero title="RSVP" eyebrow="Kindly reply" compact />
+      <div className="section section--tight">
+        <div className="panel rsvp-card">
+          <RsvpFlow />
+        </div>
       </div>
     </main>
   );

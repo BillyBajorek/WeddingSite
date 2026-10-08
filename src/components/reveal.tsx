@@ -1,14 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 
-// Fades in every [data-reveal] element inside as it scrolls into view. The hidden
-// starting state is CSS gated on html[data-entered], so content stays visible without JS.
-export function Reveal({ className, children }: { className?: string; children: React.ReactNode }) {
-  const ref = useRef<HTMLDivElement>(null);
+// Fades in every [data-reveal] element on the page as it scrolls into view. The hidden
+// starting state is CSS gated on html[data-js], so content stays visible without JS.
+export function RevealObserver() {
+  const pathname = usePathname();
 
   useEffect(() => {
-    const els = ref.current!.querySelectorAll<HTMLElement>("[data-reveal]");
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -17,15 +17,13 @@ export function Reveal({ className, children }: { className?: string; children: 
           observer.unobserve(entry.target);
         }
       },
-      { rootMargin: "0px 0px -10% 0px", threshold: 0.12 },
+      { rootMargin: "0px 0px -8% 0px", threshold: 0.1 },
     );
-    els.forEach((el) => observer.observe(el));
+    document
+      .querySelectorAll("[data-reveal]:not(.is-revealed)")
+      .forEach((el) => observer.observe(el));
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
 
-  return (
-    <div ref={ref} className={className}>
-      {children}
-    </div>
-  );
+  return null;
 }

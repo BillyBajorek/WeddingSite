@@ -12,7 +12,7 @@ export function LoginForm() {
           <label htmlFor="admin-password">Password</label>
           <input id="admin-password" name="password" type="password" required autoFocus />
         </div>
-        <button className="btn btn-outline" type="submit" disabled={pending}>
+        <button className="btn btn-primary" type="submit" disabled={pending}>
           {pending ? "Checking…" : "Sign in"}
         </button>
       </div>
@@ -44,7 +44,7 @@ export function ImportForm() {
           already on the list is skipped, so it&rsquo;s safe to paste the same list twice.
         </p>
       </div>
-      <button className="btn btn-outline" type="submit" disabled={pending}>
+      <button className="btn btn-primary" type="submit" disabled={pending}>
         {pending ? "Adding…" : "Add to guest list"}
       </button>
       {state.error && (

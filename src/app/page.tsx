@@ -27,20 +27,7 @@ const quickFacts = [
   },
 ];
 
-const keyNotes = ["Free on-site parking", "Cocktail hour", "Semi-formal attire", "Lakeside photos"];
-const milestones = ["How we met", "First date", "The “yes” moment"];
-
-function Chips({ items, label }: { items: string[]; label: string }) {
-  return (
-    <ul className="chips" aria-label={label}>
-      {items.map((item) => (
-        <li className="chip" key={item}>
-          <span className="dot" aria-hidden="true" /> {item}
-        </li>
-      ))}
-    </ul>
-  );
-}
+const delay = (ms: number) => ({ "--delay": `${ms}ms` }) as React.CSSProperties;
 
 export default function HomePage() {
   return (
@@ -48,173 +35,156 @@ export default function HomePage() {
       <Splash />
 
       <main id="main" tabIndex={-1}>
-        <section className="home-header reveal-gate" aria-label="Welcome">
-          <h1>{wedding.couple}</h1>
-          <p>
-            {wedding.dateLabel} <span aria-hidden="true">&nbsp;•&nbsp;</span>
-            <span className="sr-only">at</span> {wedding.venue}
-          </p>
-        </section>
-
-        <section
-          className="countdown-band reveal-gate"
-          aria-label="Countdown to our wedding"
-          style={{ "--delay": "120ms" } as React.CSSProperties}
-        >
-          <Countdown target={wedding.startsAt} />
-        </section>
-
-        <div className="rsvp-cta reveal-gate" style={{ "--delay": "200ms" } as React.CSSProperties}>
-          <Link className="btn btn-outline btn--white" href="/rsvp">
-            Click to RSVP Here
-          </Link>
-        </div>
-
-        <section
-          className="details-section reveal-gate"
-          aria-labelledby="details-title"
-          style={{ "--delay": "320ms" } as React.CSSProperties}
-        >
-          <div className="summary-inner">
-            <div className="summary-head">
-              <p className="eyebrow">At a glance</p>
-              <h2 className="section-title" id="details-title">
-                The Details
-              </h2>
+        <section className="hero" aria-label="Welcome">
+          <Image
+            className="hero-photo"
+            src="/images/background.jpg"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+          />
+          <div className="hero-content">
+            <p className="hero-kicker hero-reveal" style={delay(0)}>
+              We&rsquo;re getting married
+            </p>
+            <h1 className="hero-names hero-reveal" style={delay(120)}>
+              {wedding.couple}
+            </h1>
+            <p className="hero-when hero-reveal" style={delay(240)}>
+              {wedding.dateLabel}
+              <span className="hero-sep" aria-hidden="true" />
+              <span className="sr-only">at</span> {wedding.venueShort}, Howell, Michigan
+            </p>
+            <div className="hero-reveal" style={delay(360)}>
+              <Countdown target={wedding.startsAt} />
             </div>
+            <div className="hero-actions hero-reveal" style={delay(480)}>
+              <Link className="btn btn-primary btn--light" href="/rsvp">
+                RSVP
+              </Link>
+              <Link className="btn btn-outline btn--white" href="/details">
+                The details
+              </Link>
+            </div>
+          </div>
+        </section>
 
-            <div className="summary-intro">
+        <section className="section" aria-labelledby="details-title">
+          <div className="container">
+            <div className="split" data-reveal>
               <Image
-                className="summary-photo"
+                className="split-photo"
                 src="/images/waldenwoods.jpg"
                 alt="Waldenwoods banquet pavilion with its gold crest"
                 width={757}
                 height={238}
-                sizes="(max-width: 820px) 92vw, 757px"
+                sizes="(max-width: 900px) 92vw, 560px"
               />
-              <p className="summary-body">
-                Join us at <strong>{wedding.venueShort}</strong> for a lakeside celebration.
-                We&rsquo;ll host the <em>ceremony</em> outdoors (weather permitting), followed by a
-                relaxed <em>cocktail hour</em> on the grounds, and an elegant <em>reception</em> in
-                the ballroom. We&rsquo;ll close the evening with a sweet <em>exit</em> you
-                won&rsquo;t want to miss. See the full menu and timing on the details page.
-              </p>
+              <div>
+                <p className="eyebrow">At a glance</p>
+                <h2 className="section-title" id="details-title">
+                  The Details
+                </h2>
+                <p className="prose">
+                  Join us at <strong>{wedding.venueShort}</strong> for a lakeside celebration.
+                  We&rsquo;ll host the ceremony outdoors (weather permitting), followed by a relaxed
+                  cocktail hour on the grounds and an elegant reception in the ballroom. We&rsquo;ll
+                  close the evening with a sweet exit you won&rsquo;t want to miss.
+                </p>
+                <Link className="btn btn-outline" href="/details">
+                  Full schedule &amp; menu
+                </Link>
+              </div>
             </div>
 
-            <div className="quick-grid">
+            <dl className="facts" data-reveal style={delay(100)}>
               {quickFacts.map((fact) => (
-                <div className="quick-item" key={fact.title}>
-                  <h3>{fact.title}</h3>
-                  <p>{fact.body}</p>
+                <div key={fact.title}>
+                  <dt>{fact.title}</dt>
+                  <dd>{fact.body}</dd>
                 </div>
               ))}
-            </div>
-
-            <Chips items={keyNotes} label="Key notes" />
-
-            <div className="summary-actions">
-              <Link className="btn btn-outline" href="/details">
-                View Details
-              </Link>
-            </div>
+            </dl>
           </div>
         </section>
 
-        <section
-          className="card-section reveal-gate"
-          aria-labelledby="story-title"
-          style={{ "--delay": "360ms" } as React.CSSProperties}
-        >
-          <div className="card story-inner">
-            <div>
+        <section className="section section--stone" aria-labelledby="story-title">
+          <div className="container split split--story">
+            <div data-reveal>
               <p className="eyebrow">A little about us</p>
               <h2 className="section-title" id="story-title">
                 Our Story
               </h2>
-              <div className="story-body">
-                <p>
-                  From a chance hello to a lifetime of inside jokes—this is our favorite tale.
-                  We&rsquo;ve gathered the milestones, the winding paths, and the tiny moments that
-                  made everything click. If you&rsquo;d like the long version, we&rsquo;d love to
-                  share it.
-                </p>
-                <Chips items={milestones} label="Milestones" />
-                <div className="story-actions">
-                  <Link className="btn btn-outline" href="/our-story">
-                    Read the full story
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <Polaroids />
-          </div>
-        </section>
-
-        <section
-          className="stays-section reveal-gate"
-          aria-labelledby="stays-title"
-          style={{ "--delay": "400ms" } as React.CSSProperties}
-        >
-          <div className="stays-head">
-            <p className="eyebrow eyebrow--light">Nearby hotels</p>
-            <h2 className="section-title" id="stays-title">
-              Places to Stay
-            </h2>
-          </div>
-          <ul className="stays-rail">
-            {stays.map((stay) => (
-              <li key={stay.id}>
-                <StayTile stay={stay} />
-              </li>
-            ))}
-          </ul>
-          <div className="stays-cta">
-            <Link className="btn btn-outline btn--white" href="/places-to-stay">
-              See all lodging options
-            </Link>
-          </div>
-        </section>
-
-        <section
-          className="card-section reveal-gate"
-          aria-labelledby="registry-title"
-          style={{ "--delay": "420ms" } as React.CSSProperties}
-        >
-          <div className="card registry-inner">
-            <div>
-              <p className="eyebrow">Gifts</p>
-              <h2 className="section-title section-title--sm" id="registry-title">
-                Registry
-              </h2>
-              <p className="registry-text">
-                Your presence means the world to us. If you&rsquo;d like to give a gift, we have a{" "}
-                <em>Trip Fund</em> and a traditional <em>Registry</em> — we appreciate either one.
+              <p className="prose">
+                From a chance hello to a lifetime of inside jokes—this is our favorite tale.
+                We&rsquo;ve gathered the milestones, the winding paths, and the tiny moments that
+                made everything click. If you&rsquo;d like the long version, we&rsquo;d love to share
+                it.
               </p>
+              <Link className="btn btn-outline" href="/our-story">
+                Read our story
+              </Link>
             </div>
+            <div data-reveal style={delay(120)}>
+              <Polaroids />
+            </div>
+          </div>
+        </section>
+
+        <section className="section section--sage" aria-labelledby="stays-title">
+          <div className="container">
+            <div className="section-head section-head--row" data-reveal>
+              <div>
+                <p className="eyebrow eyebrow--light">Nearby hotels</p>
+                <h2 className="section-title" id="stays-title">
+                  Places to Stay
+                </h2>
+              </div>
+              <Link className="btn btn-outline btn--white" href="/places-to-stay">
+                All lodging options
+              </Link>
+            </div>
+            <ul className="stays-grid">
+              {stays.map((stay, index) => (
+                <li key={stay.id} data-reveal style={delay(index * 90)}>
+                  <StayTile stay={stay} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section className="section" aria-labelledby="registry-title">
+          <div className="container container--narrow center" data-reveal>
+            <p className="eyebrow">Gifts</p>
+            <h2 className="section-title" id="registry-title">
+              Registry
+            </h2>
+            <p className="prose">
+              Your presence means the world to us. If you&rsquo;d like to give a gift, we have a
+              trip fund and a traditional registry — we appreciate either one.
+            </p>
             <Link className="btn btn-outline" href="/registry">
-              Visit Registry
+              Visit the registry
             </Link>
           </div>
         </section>
 
-        <section
-          className="card-section faq-section reveal-gate"
-          aria-labelledby="faq-title"
-          style={{ "--delay": "460ms" } as React.CSSProperties}
-        >
-          <div className="card faq-inner">
-            <div className="faq-head">
+        <section className="section section--stone" aria-labelledby="faq-title">
+          <div className="container container--narrow">
+            <div className="section-head section-head--row" data-reveal>
               <div>
                 <p className="eyebrow">Good to know</p>
                 <h2 className="section-title" id="faq-title">
-                  FAQ
+                  Questions
                 </h2>
               </div>
               <Link className="btn btn-outline" href="/faq">
-                View All FAQs
+                All FAQs
               </Link>
             </div>
-            <div className="faq-list">
+            <div className="faq-list" data-reveal style={delay(100)}>
               {featuredFaqs.map((faq) => (
                 <details key={faq.question}>
                   <summary>{faq.question}</summary>

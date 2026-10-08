@@ -141,7 +141,6 @@ export function Itinerary({ items }: { items: ItineraryItem[] }) {
                 </button>
                 <div className="node-details" id={`${item.id}-details`} inert={!isOpen}>
                   <div>
-                    <span className="node-chip">Starts {item.time}</span>
                     <p className="node-brief">{item.brief}</p>
                     <dl className="node-meta">
                       {rows.map(([label, value]) => (
