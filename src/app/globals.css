@@ -991,6 +991,337 @@ html[data-entered="seen"] .splash {
   line-height: 1.7;
 }
 
+/* ===== RSVP ===== */
+.rsvp-page {
+  position: relative;
+  z-index: 5;
+  padding: clamp(28px, 6vh, 64px) 16px 10vh;
+}
+.rsvp-card {
+  max-width: 820px;
+  padding: clamp(28px, 5vw, 56px);
+}
+.rsvp-card--wide {
+  max-width: 1100px;
+}
+.rsvp-title {
+  margin-bottom: clamp(14px, 2vw, 22px);
+  font-size: clamp(44px, 6vw, 72px);
+  text-align: center;
+}
+.rsvp-step {
+  display: grid;
+  gap: 18px;
+}
+.rsvp-step-title {
+  margin: 0;
+  font-family: var(--font-display-stack);
+  font-weight: 600;
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--brand);
+}
+.rsvp-step-title:focus {
+  outline: none;
+}
+.rsvp-lede {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #3f3f3f;
+}
+.rsvp-search {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+}
+.rsvp-search .rsvp-field {
+  flex: 1;
+}
+.rsvp-field label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #444;
+}
+.rsvp-field input,
+.rsvp-field select,
+.rsvp-field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.rsvp-field textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+.rsvp-field input:focus,
+.rsvp-field select:focus,
+.rsvp-field textarea:focus {
+  outline: none;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(111, 145, 89, 0.18);
+  background: #fff;
+}
+.rsvp-hint {
+  margin: 7px 0 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #666;
+}
+.rsvp-message {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(111, 145, 89, 0.35);
+  border-radius: 10px;
+  background: rgba(111, 145, 89, 0.08);
+  font-size: 14px;
+  line-height: 1.6;
+}
+.rsvp-message p {
+  margin: 0;
+}
+.rsvp-message p + p {
+  margin-top: 6px;
+}
+.rsvp-message--error {
+  border-color: rgba(155, 47, 47, 0.3);
+  background: rgba(155, 47, 47, 0.06);
+  color: #9b2f2f;
+}
+.rsvp-guest,
+.rsvp-extras,
+.admin-party,
+.admin-import {
+  margin: 0;
+  padding: 18px;
+  border: 1px solid rgba(111, 145, 89, 0.28);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.42);
+}
+.rsvp-guest {
+  display: grid;
+  gap: 14px;
+  min-width: 0;
+}
+.rsvp-guest-name {
+  float: left;
+  width: 100%;
+  margin-bottom: 2px;
+  padding: 0;
+  font-family: var(--font-script-stack);
+  font-size: 32px;
+  line-height: 1.1;
+  color: var(--brand);
+}
+.rsvp-choice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.rsvp-choice label {
+  position: relative;
+  cursor: pointer;
+}
+.rsvp-choice input {
+  position: absolute;
+  opacity: 0;
+}
+.rsvp-choice span {
+  display: inline-block;
+  padding: 10px 16px;
+  border: 1px solid rgba(0, 0, 0, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 15px;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+.rsvp-choice input:checked + span {
+  border-color: var(--brand);
+  background: var(--brand);
+  color: #fff;
+}
+.rsvp-choice input:focus-visible + span {
+  outline: 2px solid var(--ink);
+  outline-offset: 2px;
+}
+.rsvp-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 14px;
+}
+.rsvp-extras {
+  display: grid;
+  gap: 16px;
+}
+.rsvp-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 22px;
+}
+.rsvp-link {
+  padding: 4px 0;
+  border: 0;
+  background: none;
+  color: #555;
+  font: inherit;
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.rsvp-link:hover {
+  color: var(--ink);
+}
+.rsvp-matches,
+.rsvp-summary,
+.admin-guests,
+.admin-parties {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.rsvp-match {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid rgba(111, 145, 89, 0.35);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--ink);
+  font: inherit;
+  font-size: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+.rsvp-match:hover {
+  border-color: var(--brand);
+  transform: translateY(-1px);
+}
+.rsvp-summary li,
+.admin-guests li {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 4px 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+.rsvp-summary-name {
+  font-weight: 600;
+}
+@media (max-width: 640px) {
+  .rsvp-search {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* ===== RSVP responses (admin) ===== */
+.admin {
+  display: grid;
+  gap: 22px;
+}
+.admin-toolbar,
+.admin-party-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.admin-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin: 0;
+}
+.admin-stats div {
+  padding: 14px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+.admin-stats dt,
+.admin-extras dt {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #666;
+}
+.admin-stats dd {
+  margin: 4px 0 0;
+  font-family: var(--font-display-stack);
+  font-size: 30px;
+}
+.admin-meals {
+  margin: -8px 0 0;
+  font-size: 14px;
+  color: #444;
+}
+.admin-import {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+}
+.admin-import .rsvp-field {
+  width: 100%;
+}
+.admin-parties {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 14px;
+}
+.admin-party {
+  display: grid;
+  align-content: start;
+  gap: 12px;
+}
+.admin-status {
+  font-size: 14px;
+  color: #666;
+}
+.admin-status--attending {
+  color: #3f6f2e;
+}
+.admin-status--declined {
+  color: #9b2f2f;
+}
+.admin-extras {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  font-size: 14px;
+}
+.admin-extras dd {
+  margin: 2px 0 0;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.admin-party-foot {
+  font-size: 13px;
+  color: #666;
+}
+
 /* ===== Back to top ===== */
 .back-to-top {
   position: fixed;
