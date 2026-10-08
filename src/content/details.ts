@@ -111,15 +111,16 @@ export type MenuItem = { name: string; desc?: string; tags?: DietTag[] };
 export type MenuSection = {
   id: string;
   title: string;
-  /** Bar items render in two columns on wide screens. */
-  columns?: boolean;
   items: MenuItem[];
 };
 
-export const menu: MenuSection[] = [
+/** Each course is one column of the menu card. */
+export type MenuCourse = { title: string; sections: MenuSection[] };
+
+const sections: MenuSection[] = [
   {
     id: "cocktail-hour",
-    title: "Cocktail Hour — Hors d’oeuvres",
+    title: "Hors d’oeuvres",
     items: [
       { name: "Caprese Skewers", tags: ["V", "GF"] },
       { name: "Spinach & Artichoke Tartlets", tags: ["V"] },
@@ -130,8 +131,7 @@ export const menu: MenuSection[] = [
   },
   {
     id: "bar-menu",
-    title: "Bar Menu",
-    columns: true,
+    title: "Bar",
     items: [
       { name: "Beer", desc: "Domestic & craft selection" },
       { name: "Wine", desc: "Red & white varieties" },
@@ -168,4 +168,11 @@ export const menu: MenuSection[] = [
       { name: "Brownies", desc: "Rich chocolate" },
     ],
   },
+];
+
+const pick = (...ids: string[]) => ids.map((id) => sections.find((section) => section.id === id)!);
+
+export const menu: MenuCourse[] = [
+  { title: "Cocktail Hour", sections: pick("cocktail-hour", "bar-menu") },
+  { title: "Dinner", sections: pick("entrees", "sides", "dessert") },
 ];

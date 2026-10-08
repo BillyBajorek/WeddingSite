@@ -49,8 +49,10 @@ export default function DetailsPage() {
               Itinerary
             </h2>
           </div>
+          <div data-reveal>
+            <Itinerary items={itinerary} />
+          </div>
         </div>
-        <Itinerary items={itinerary} />
       </section>
 
       <section id="venue" className="section section--stone" aria-labelledby="venue-title">
@@ -94,12 +96,11 @@ export default function DetailsPage() {
 
       <section id="menu" className="section" aria-labelledby="menu-title">
         <div className="container">
-          <div className="section-head center" data-reveal>
-            <p className="eyebrow">Dinner</p>
+          <div className="section-head section-head--compact center" data-reveal>
             <h2 className="section-title" id="menu-title">
               The Menu
             </h2>
-            <p className="section-lede">
+            <p className="section-lede menu-note">
               Subject to minor changes. Please let us know about any allergies or dietary needs.
             </p>
             <p className="menu-legend">
@@ -113,21 +114,20 @@ export default function DetailsPage() {
               ))}
             </p>
           </div>
-          <div className="menu-grid">
-            {menu.map((section, index) => (
-              <div
-                key={section.id}
-                id={section.id}
-                className={`menu-section${section.columns ? " menu-section--wide" : ""}`}
-                data-reveal
-                style={{ "--delay": `${(index % 2) * 80}ms` } as React.CSSProperties}
-              >
-                <h3 className="menu-title">{section.title}</h3>
-                <ul className={`menu-list${section.columns ? " menu-list--columns" : ""}`}>
-                  {section.items.map((item) => (
-                    <Dish key={item.name} item={item} />
-                  ))}
-                </ul>
+          <div className="menu-card" data-reveal>
+            {menu.map((course) => (
+              <div key={course.title} className="menu-course">
+                <h3 className="menu-course-title">{course.title}</h3>
+                {course.sections.map((section) => (
+                  <div key={section.id} id={section.id} className="menu-section">
+                    <h4 className="menu-title">{section.title}</h4>
+                    <ul className="menu-list">
+                      {section.items.map((item) => (
+                        <Dish key={item.name} item={item} />
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
