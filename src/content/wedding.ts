@@ -2,7 +2,7 @@ export const wedding = {
   couple: "Billy & Brenna",
   dateLabel: "September 12th, 2027",
   // Ceremony start in Michigan time (EDT). The countdown counts down to this instant.
-  startsAt: "2027-09-12T17:30:00-04:00",
+  startsAt: "2027-09-12T16:00:00-04:00",
   venue: "Waldenwoods Banquet and Conference Center",
   address: "2975 Old US-23, Howell, MI 48855",
   venueShort: "Waldenwoods",
