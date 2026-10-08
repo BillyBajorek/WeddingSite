@@ -1,6 +1,5 @@
 "use server";
 
-import { meals } from "@/content/rsvp";
 import { DatabaseNotConfiguredError } from "@/lib/db";
 import {
   findInvitations,
@@ -51,20 +50,14 @@ export async function submitRsvp(input: RsvpSubmission): Promise<SubmitResult> {
     return { error: "Please look up your invitation again." };
   }
 
-  const mealValues = new Set(meals.map((meal) => meal.value));
   const guests: GuestAnswer[] = [];
   for (const raw of input.guests.slice(0, 12)) {
     if (typeof raw?.attending !== "boolean") {
       return { error: "Please let us know whether each guest will be attending." };
     }
-    const meal = text(raw.meal, 40);
-    if (raw.attending && mealValues.size && !mealValues.has(meal)) {
-      return { error: "Please choose a meal for each guest who is attending." };
-    }
     guests.push({
       id: Number(raw.id),
       attending: raw.attending,
-      meal: raw.attending ? meal || null : null,
       name: text(raw.name, 100),
     });
   }
@@ -80,6 +73,7 @@ export async function submitRsvp(input: RsvpSubmission): Promise<SubmitResult> {
       guests,
       email,
       songRequest: text(input.songRequest, 200),
+      firstDanceSong: text(input.firstDanceSong, 200),
       dietary: text(input.dietary, 1000),
       notes: text(input.notes, 2000),
     });

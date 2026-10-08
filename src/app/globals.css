@@ -1915,11 +1915,6 @@ html[data-js] [data-reveal].is-revealed {
   line-height: 1.1;
   font-variant-numeric: lining-nums tabular-nums;
 }
-.admin-meals {
-  margin: -8px 0 0;
-  font-size: 14px;
-  color: var(--body);
-}
 .admin-import {
   display: grid;
   gap: 14px;

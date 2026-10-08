@@ -36,12 +36,14 @@ export function ImportForm() {
           name="guests"
           rows={6}
           required
-          placeholder={"John Smith, Jane Smith\nAunt Carol Jones\nMike Brown, +1"}
+          placeholder={"John Smith, Jane Smith, married\nAunt Carol Jones\nMike Brown, +1"}
         />
         <p className="rsvp-hint">
           One invitation per line. Separate the people on an invitation with commas, or paste rows
-          straight from a spreadsheet. Write <strong>+1</strong> for an unnamed plus-one. Anyone
-          already on the list is skipped, so it&rsquo;s safe to paste the same list twice.
+          straight from a spreadsheet. Write <strong>+1</strong> for an unnamed plus-one, and{" "}
+          <strong>married</strong> at the end of a line to ask that couple for their first dance
+          song. Anyone already on the list is skipped, so it&rsquo;s safe to paste the same list
+          twice.
         </p>
       </div>
       <button className="btn btn-primary" type="submit" disabled={pending}>

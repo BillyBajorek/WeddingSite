@@ -8,9 +8,13 @@ const schema = `
     song_request text not null default '',
     dietary text not null default '',
     notes text not null default '',
+    offer_first_dance boolean not null default false,
+    first_dance_song text not null default '',
     responded_at timestamptz,
     created_at timestamptz not null default now()
   );
+  alter table parties add column if not exists offer_first_dance boolean not null default false;
+  alter table parties add column if not exists first_dance_song text not null default '';
   create table if not exists guests (
     id serial primary key,
     party_id integer not null references parties(id) on delete cascade,

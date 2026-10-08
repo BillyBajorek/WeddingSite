@@ -3,7 +3,6 @@ import { connection } from "next/server";
 import { Suspense } from "react";
 import { PageHero } from "@/components/page-hero";
 import { ImportForm, LoginForm, RemoveButton } from "@/components/rsvp/admin-forms";
-import { mealLabel, meals } from "@/content/rsvp";
 import { ADMIN_PATH, adminConfigured, isAdmin } from "@/lib/admin";
 import { listParties, type Guest } from "@/lib/guests";
 import { logout } from "./actions";
@@ -93,17 +92,6 @@ async function Responses() {
           </div>
         ))}
       </dl>
-      {attending.length > 0 && (
-        <p className="admin-meals">
-          {meals
-            .map(
-              (meal) =>
-                `${meal.label}: ${attending.filter((guest) => guest.meal === meal.value).length}`,
-            )
-            .join(" · ")}
-        </p>
-      )}
-
       <ImportForm />
 
       <h2 className="rsvp-step-title">Invitations ({parties.length})</h2>
@@ -115,6 +103,10 @@ async function Responses() {
             const names = party.guests.map((guest) => guest.name || "Guest").join(", ");
             const extras = [
               ["Email", party.email],
+              [
+                "First dance",
+                party.offerFirstDance ? party.firstDanceSong || "Asked, no song yet" : "",
+              ],
               ["Song", party.songRequest],
               ["Dietary", party.dietary],
               ["Notes", party.notes],
@@ -129,7 +121,6 @@ async function Responses() {
                       </span>
                       <span className={`admin-status admin-status--${status(guest).split(" ")[0].toLowerCase()}`}>
                         {status(guest)}
-                        {guest.attending && guest.meal ? ` · ${mealLabel(guest.meal)}` : ""}
                       </span>
                     </li>
                   ))}

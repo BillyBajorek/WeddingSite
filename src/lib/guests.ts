@@ -15,6 +15,9 @@ export type Invitation = {
   id: number;
   guests: Guest[];
   songRequest: string;
+  /** Set when this invitation was marked for a couple's first-dance song. */
+  offerFirstDance: boolean;
+  firstDanceSong: string;
   dietary: string;
   respondedAt: string | null;
 };
@@ -28,7 +31,6 @@ export type PartyRecord = Invitation & {
 export type GuestAnswer = {
   id: number;
   attending: boolean;
-  meal: string | null;
   name: string;
 };
 
@@ -37,6 +39,7 @@ export type RsvpSubmission = {
   guests: GuestAnswer[];
   email: string;
   songRequest: string;
+  firstDanceSong: string;
   dietary: string;
   notes: string;
 };
@@ -54,6 +57,8 @@ type PartyRow = {
   id: number;
   email: string;
   song_request: string;
+  offer_first_dance: boolean;
+  first_dance_song: string;
   dietary: string;
   notes: string;
   responded_at: Date | null;
@@ -102,6 +107,8 @@ function toParty(row: PartyRow, guests: GuestRow[]): PartyRecord {
     guests: guests.filter((guest) => guest.party_id === row.id).map(toGuest),
     email: row.email,
     songRequest: row.song_request,
+    offerFirstDance: row.offer_first_dance,
+    firstDanceSong: row.first_dance_song,
     dietary: row.dietary,
     notes: row.notes,
     respondedAt: row.responded_at?.toISOString() ?? null,
@@ -109,8 +116,16 @@ function toParty(row: PartyRow, guests: GuestRow[]): PartyRecord {
   };
 }
 
-function toInvitation({ id, guests, songRequest, dietary, respondedAt }: PartyRecord): Invitation {
-  return { id, guests, songRequest, dietary, respondedAt };
+function toInvitation({
+  id,
+  guests,
+  songRequest,
+  offerFirstDance,
+  firstDanceSong,
+  dietary,
+  respondedAt,
+}: PartyRecord): Invitation {
+  return { id, guests, songRequest, offerFirstDance, firstDanceSong, dietary, respondedAt };
 }
 
 async function loadParties(partyIds?: number[]) {
@@ -143,10 +158,12 @@ export type SaveOutcome = Invitation | "not-found" | "plus-one-unnamed";
 
 export async function saveRsvp(submission: RsvpSubmission): Promise<SaveOutcome> {
   const outcome = await transaction(async (client) => {
-    const party = await client.query("select id from parties where id = $1 for update", [
-      submission.partyId,
-    ]);
+    const party = await client.query<{ offer_first_dance: boolean }>(
+      "select offer_first_dance from parties where id = $1 for update",
+      [submission.partyId],
+    );
     if (!party.rowCount) return "not-found" as const;
+    const offerFirstDance = party.rows[0].offer_first_dance;
 
     const existing = await client.query<GuestRow>("select * from guests where party_id = $1", [
       submission.partyId,
@@ -169,10 +186,9 @@ export async function saveRsvp(submission: RsvpSubmission): Promise<SaveOutcome>
 
     for (const guest of existing.rows) {
       const answer = answers.get(guest.id)!;
-      await client.query("update guests set attending = $2, meal = $3, name = $4 where id = $1", [
+      await client.query("update guests set attending = $2, meal = null, name = $3 where id = $1", [
         guest.id,
         answer.attending,
-        answer.attending ? answer.meal : null,
         guest.is_plus_one ? answer.name : guest.name,
       ]);
     }
@@ -181,14 +197,18 @@ export async function saveRsvp(submission: RsvpSubmission): Promise<SaveOutcome>
       `update parties set
          email = coalesce(nullif($2, ''), email),
          song_request = $3,
-         dietary = $4,
-         notes = coalesce(nullif($5, ''), notes),
+         first_dance_song = $4,
+         dietary = $5,
+         notes = coalesce(nullif($6, ''), notes),
          responded_at = now()
        where id = $1`,
       [
         submission.partyId,
         submission.email,
         submission.songRequest,
+        offerFirstDance && submission.guests.some((guest) => guest.attending)
+          ? submission.firstDanceSong
+          : "",
         submission.dietary,
         submission.notes,
       ],
@@ -214,11 +234,12 @@ export type ImportResult = { added: number; skipped: string[]; invalid: string[]
 
 // One party per line; names separated by commas or tabs (so rows pasted from a
 // spreadsheet work). "+1", "Plus One", or "Guest" adds an unnamed plus-one.
+// A trailing "married" asks that couple for their first dance song.
 export async function importGuestList(text: string): Promise<ImportResult> {
   const result: ImportResult = { added: 0, skipped: [], invalid: [] };
   const existing = await query<{ name: string }>("select name from guests where name <> ''");
   const known = new Set(existing.map((guest) => nameTokens(guest.name).join(" ")));
-  const parties: { name: string; isPlusOne: boolean }[][] = [];
+  const parties: { guests: { name: string; isPlusOne: boolean }[]; offerFirstDance: boolean }[] = [];
 
   for (const line of text.split(/\r?\n/)) {
     const cells = line
@@ -227,7 +248,10 @@ export async function importGuestList(text: string): Promise<ImportResult> {
       .filter(Boolean);
     if (!cells.length) continue;
 
-    const guests = cells.map((cell) =>
+    // A trailing "married" marks the invitation for a couple's first-dance song.
+    const offerFirstDance = /^(married|first[\s-]?dance)$/i.test(cells.at(-1) ?? "");
+    const people = offerFirstDance ? cells.slice(0, -1) : cells;
+    const guests = people.map((cell) =>
       plusOneToken.test(cell) ? { name: "", isPlusOne: true } : { name: cell, isPlusOne: false },
     );
     const named = guests.filter((guest) => !guest.isPlusOne);
@@ -245,13 +269,14 @@ export async function importGuestList(text: string): Promise<ImportResult> {
       continue;
     }
     keys.forEach((key) => known.add(key));
-    parties.push(guests);
+    parties.push({ guests, offerFirstDance });
   }
 
   await transaction(async (client) => {
-    for (const guests of parties) {
+    for (const { guests, offerFirstDance } of parties) {
       const party = await client.query<{ id: number }>(
-        "insert into parties default values returning id",
+        "insert into parties (offer_first_dance) values ($1) returning id",
+        [offerFirstDance],
       );
       for (const [position, guest] of guests.entries()) {
         await client.query(

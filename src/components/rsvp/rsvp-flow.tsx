@@ -2,10 +2,10 @@
 
 import { useEffect, useRef, useState, useTransition } from "react";
 import { lookupInvitation, submitRsvp } from "@/app/rsvp/actions";
-import { mealLabel, meals, rsvpCopy } from "@/content/rsvp";
+import { rsvpCopy } from "@/content/rsvp";
 import type { Invitation } from "@/lib/guests";
 
-type Answer = { attending: boolean | null; meal: string; name: string };
+type Answer = { attending: boolean | null; name: string };
 type Step = "search" | "choose" | "form" | "done";
 
 const partyNames = (invitation: Invitation) =>
@@ -18,7 +18,7 @@ function answersFor(invitation: Invitation): Record<number, Answer> {
   return Object.fromEntries(
     invitation.guests.map((guest) => [
       guest.id,
-      { attending: guest.attending, meal: guest.meal ?? "", name: guest.name },
+      { attending: guest.attending, name: guest.name },
     ]),
   );
 }
@@ -31,6 +31,7 @@ export function RsvpFlow() {
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
   const [email, setEmail] = useState("");
   const [songRequest, setSongRequest] = useState("");
+  const [firstDanceSong, setFirstDanceSong] = useState("");
   const [dietary, setDietary] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
@@ -52,6 +53,7 @@ export function RsvpFlow() {
     setInvitation(selected);
     setAnswers(answersFor(selected));
     setSongRequest(selected.songRequest);
+    setFirstDanceSong(selected.firstDanceSong);
     setDietary(selected.dietary);
     setEmail("");
     setNotes("");
@@ -88,11 +90,11 @@ export function RsvpFlow() {
         guests: invitation.guests.map((guest) => ({
           id: guest.id,
           attending: answers[guest.id].attending === true,
-          meal: answers[guest.id].meal,
           name: answers[guest.id].name,
         })),
         email,
         songRequest,
+        firstDanceSong,
         dietary,
         notes,
       });
@@ -180,13 +182,15 @@ export function RsvpFlow() {
         <p className="rsvp-lede">
           {anyoneAttending ? rsvpCopy.thanksAttending : rsvpCopy.thanksDeclined}
         </p>
+        {invitation.firstDanceSong && (
+          <p className="rsvp-lede">First dance song: {invitation.firstDanceSong}</p>
+        )}
         <ul className="rsvp-summary">
           {invitation.guests.map((guest) => (
             <li key={guest.id}>
               <span className="rsvp-summary-name">{guest.name || "Guest"}</span>
               <span>
                 {guest.attending ? "Attending" : "Not attending"}
-                {guest.attending && guest.meal ? ` · ${mealLabel(guest.meal)}` : ""}
               </span>
             </li>
           ))}
@@ -240,38 +244,16 @@ export function RsvpFlow() {
                 <span>{guest.isPlusOne ? "Won't attend" : "Regretfully declines"}</span>
               </label>
             </div>
-            {answer.attending && (
-              <div className="rsvp-grid">
-                {guest.isPlusOne && (
-                  <div className="rsvp-field">
-                    <label htmlFor={`${id}-name`}>Guest&rsquo;s full name</label>
-                    <input
-                      id={`${id}-name`}
-                      type="text"
-                      value={answer.name}
-                      onChange={(event) => update(guest.id, { name: event.target.value })}
-                      required
-                    />
-                  </div>
-                )}
-                {meals.length > 0 && (
-                  <div className="rsvp-field">
-                    <label htmlFor={`${id}-meal`}>Meal choice</label>
-                    <select
-                      id={`${id}-meal`}
-                      value={answer.meal}
-                      onChange={(event) => update(guest.id, { meal: event.target.value })}
-                      required
-                    >
-                      <option value="">Select one</option>
-                      {meals.map((meal) => (
-                        <option key={meal.value} value={meal.value}>
-                          {meal.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
+            {answer.attending && guest.isPlusOne && (
+              <div className="rsvp-field">
+                <label htmlFor={`${id}-name`}>Guest&rsquo;s full name</label>
+                <input
+                  id={`${id}-name`}
+                  type="text"
+                  value={answer.name}
+                  onChange={(event) => update(guest.id, { name: event.target.value })}
+                  required
+                />
               </div>
             )}
           </fieldset>
@@ -290,6 +272,22 @@ export function RsvpFlow() {
                 placeholder="Let us know about any allergies or dietary needs in your party."
               />
             </div>
+            {invitation.offerFirstDance && (
+              <div className="rsvp-field">
+                <label htmlFor="rsvp-first-dance">Your first dance song</label>
+                <input
+                  id="rsvp-first-dance"
+                  type="text"
+                  value={firstDanceSong}
+                  onChange={(event) => setFirstDanceSong(event.target.value)}
+                  placeholder="The song from your wedding"
+                />
+                <p className="rsvp-hint">
+                  Optional. We may play it during cocktail hour, or as a slow dance later in the
+                  night.
+                </p>
+              </div>
+            )}
             <div className="rsvp-field">
               <label htmlFor="rsvp-song">Song request</label>
               <input

@@ -1,4 +1,3 @@
-import { mealLabel } from "@/content/rsvp";
 import { isAdmin } from "@/lib/admin";
 import { listParties } from "@/lib/guests";
 
@@ -12,16 +11,29 @@ function cell(value: string | number) {
 export async function GET() {
   if (!(await isAdmin())) return new Response("Not signed in", { status: 401 });
 
-  const header = ["Invitation", "Guest", "Plus one", "Status", "Meal", "Email", "Song request", "Dietary", "Notes", "Replied at"];
+  const header = [
+    "Invitation",
+    "Guest",
+    "Plus one",
+    "Status",
+    "Email",
+    "Song request",
+    "First dance",
+    "First dance song",
+    "Dietary",
+    "Notes",
+    "Replied at",
+  ];
   const rows = (await listParties()).flatMap((party) =>
     party.guests.map((guest) => [
       party.id,
       guest.name,
       guest.isPlusOne ? "Yes" : "",
       guest.attending === null ? "Awaiting reply" : guest.attending ? "Attending" : "Declined",
-      guest.attending ? mealLabel(guest.meal) : "",
       party.email,
       party.songRequest,
+      party.offerFirstDance ? "Yes" : "",
+      party.firstDanceSong,
       party.dietary,
       party.notes,
       party.respondedAt ?? "",
