@@ -269,9 +269,8 @@ html[data-entered="seen"] .splash {
   }
 }
 
-/* ===== Buttons (drawn-border outline) ===== */
+/* ===== Buttons (outline pill that fills on hover) ===== */
 .btn {
-  position: relative;
   display: inline-block;
   padding: 13px 22px;
   border: 0;
@@ -286,57 +285,43 @@ html[data-entered="seen"] .splash {
   text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
-  transition: transform 0.3s ease;
 }
 .btn-outline {
-  /* Resting outline so buttons still read as buttons on touch screens with no hover. */
-  box-shadow: inset 0 0 0 1px rgba(44, 44, 44, 0.22);
-}
-.btn-outline::before,
-.btn-outline::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border: 1px solid var(--ink);
-  border-radius: inherit;
-  transition: all 0.35s ease;
-  pointer-events: none;
-}
-.btn-outline::before {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-}
-.btn-outline::after {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
-}
-.btn-outline:hover::before,
-.btn-outline:hover::after {
-  width: 100%;
-  height: 100%;
-}
-.btn-outline:hover {
-  transform: translateY(-2px);
-}
-.btn-outline:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
+  --btn-line: var(--ink);
+  --btn-fill-text: #fff;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--btn-line) 45%, transparent);
+  transition:
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    color 0.25s ease,
+    transform 0.25s ease;
 }
 .btn--white {
+  --btn-line: #fff;
+  --btn-fill-text: var(--ink);
   color: #fff;
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
 }
-.btn--white::before,
-.btn--white::after {
-  border-color: #fff;
+/* Hover-only devices, so a tap on a phone doesn't leave the button stuck filled. */
+@media (hover: hover) {
+  .btn-outline:hover,
+  .stay-tile:hover .stay-view {
+    background-color: var(--btn-line);
+    box-shadow: inset 0 0 0 1px var(--btn-line);
+    color: var(--btn-fill-text);
+    transform: translateY(-1px);
+  }
 }
-.btn--white:focus-visible {
-  outline-color: #fff;
+.btn-outline:active {
+  transform: translateY(0);
+}
+.btn-outline:focus-visible {
+  outline: 2px solid var(--btn-line);
+  outline-offset: 3px;
+}
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* ===== Shared section pieces ===== */
@@ -751,11 +736,6 @@ html[data-entered="seen"] .splash {
 .stay-tile:hover {
   transform: translateY(-3px);
   box-shadow: 0 14px 30px rgba(0, 0, 0, 0.22);
-}
-.stay-tile:hover .stay-view::before,
-.stay-tile:hover .stay-view::after {
-  width: 100%;
-  height: 100%;
 }
 .stay-tile:focus-visible {
   outline: 2px solid #fff;
@@ -1335,54 +1315,31 @@ html[data-entered="seen"] .splash {
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.15);
   backdrop-filter: blur(4px);
-  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.45),
+    0 8px 22px rgba(0, 0, 0, 0.25);
   color: #fff;
   font-size: 22px;
   cursor: pointer;
   opacity: 0;
   visibility: hidden;
-  overflow: hidden;
   transition:
     opacity 0.3s ease,
-    transform 0.3s ease,
+    transform 0.25s ease,
     visibility 0.3s ease,
-    background 0.3s ease;
-}
-.back-to-top::before,
-.back-to-top::after {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border: 1px solid #fff;
-  border-radius: 50%;
-  transition: all 0.35s ease;
-  pointer-events: none;
-}
-.back-to-top::before {
-  top: 0;
-  left: 0;
-  border-right: none;
-  border-bottom: none;
-}
-.back-to-top::after {
-  bottom: 0;
-  right: 0;
-  border-left: none;
-  border-top: none;
+    background-color 0.25s ease,
+    color 0.25s ease;
 }
 .back-to-top.show {
   opacity: 1;
   visibility: visible;
 }
-.back-to-top:hover {
-  transform: translateY(-3px);
-  background: rgba(255, 255, 255, 0.25);
-}
-.back-to-top:hover::before,
-.back-to-top:hover::after {
-  width: 100%;
-  height: 100%;
+@media (hover: hover) {
+  .back-to-top:hover {
+    transform: translateY(-1px);
+    background-color: #fff;
+    color: var(--ink);
+  }
 }
 .back-to-top:focus-visible {
   outline: 2px solid #fff;
