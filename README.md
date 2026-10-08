@@ -41,15 +41,18 @@ GitHub is the source of truth. Don't edit or commit code inside Replit; to pick 
 run this in the Replit Shell:
 
 ```bash
-git pull --ff-only && npm install
+git pull --ff-only && npm ci
 ```
 
-If Replit ever has commits of its own and the pull refuses, make it an exact copy of GitHub again
-(this discards anything changed inside Replit):
+Use `npm ci`, not `npm install`: Replit's npm rewrites `package-lock.json` on install, and that
+local edit blocks the next pull.
+
+If Replit ever has commits or edits of its own and the pull refuses, make it an exact copy of
+GitHub again (this discards anything changed inside Replit):
 
 ```bash
 git rebase --abort; git merge --abort
-git fetch origin && git reset --hard origin/main && npm install
+git fetch origin && git reset --hard origin/main && npm ci
 ```
 
 ## Where things live
