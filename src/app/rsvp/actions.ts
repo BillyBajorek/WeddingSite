@@ -72,8 +72,8 @@ export async function submitRsvp(input: RsvpSubmission): Promise<SubmitResult> {
       partyId,
       guests,
       email,
-      songRequest: text(input.songRequest, 200),
       firstDanceSong: text(input.firstDanceSong, 200),
+      firstDanceArtist: text(input.firstDanceArtist, 200),
       dietary: text(input.dietary, 1000),
       notes: text(input.notes, 2000),
     });

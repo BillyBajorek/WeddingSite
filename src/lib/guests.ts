@@ -14,10 +14,10 @@ export type Guest = {
 export type Invitation = {
   id: number;
   guests: Guest[];
-  songRequest: string;
   /** Set when this invitation was marked for a couple's first-dance song. */
   offerFirstDance: boolean;
   firstDanceSong: string;
+  firstDanceArtist: string;
   dietary: string;
   respondedAt: string | null;
 };
@@ -38,8 +38,8 @@ export type RsvpSubmission = {
   partyId: number;
   guests: GuestAnswer[];
   email: string;
-  songRequest: string;
   firstDanceSong: string;
+  firstDanceArtist: string;
   dietary: string;
   notes: string;
 };
@@ -56,9 +56,9 @@ type GuestRow = {
 type PartyRow = {
   id: number;
   email: string;
-  song_request: string;
   offer_first_dance: boolean;
   first_dance_song: string;
+  first_dance_artist: string;
   dietary: string;
   notes: string;
   responded_at: Date | null;
@@ -106,9 +106,9 @@ function toParty(row: PartyRow, guests: GuestRow[]): PartyRecord {
     id: row.id,
     guests: guests.filter((guest) => guest.party_id === row.id).map(toGuest),
     email: row.email,
-    songRequest: row.song_request,
     offerFirstDance: row.offer_first_dance,
     firstDanceSong: row.first_dance_song,
+    firstDanceArtist: row.first_dance_artist,
     dietary: row.dietary,
     notes: row.notes,
     respondedAt: row.responded_at?.toISOString() ?? null,
@@ -119,13 +119,13 @@ function toParty(row: PartyRow, guests: GuestRow[]): PartyRecord {
 function toInvitation({
   id,
   guests,
-  songRequest,
   offerFirstDance,
   firstDanceSong,
+  firstDanceArtist,
   dietary,
   respondedAt,
 }: PartyRecord): Invitation {
-  return { id, guests, songRequest, offerFirstDance, firstDanceSong, dietary, respondedAt };
+  return { id, guests, offerFirstDance, firstDanceSong, firstDanceArtist, dietary, respondedAt };
 }
 
 async function loadParties(partyIds?: number[]) {
@@ -196,8 +196,8 @@ export async function saveRsvp(submission: RsvpSubmission): Promise<SaveOutcome>
     await client.query(
       `update parties set
          email = coalesce(nullif($2, ''), email),
-         song_request = $3,
-         first_dance_song = $4,
+         first_dance_song = $3,
+         first_dance_artist = $4,
          dietary = $5,
          notes = coalesce(nullif($6, ''), notes),
          responded_at = now()
@@ -205,9 +205,11 @@ export async function saveRsvp(submission: RsvpSubmission): Promise<SaveOutcome>
       [
         submission.partyId,
         submission.email,
-        submission.songRequest,
         offerFirstDance && submission.guests.some((guest) => guest.attending)
           ? submission.firstDanceSong
+          : "",
+        offerFirstDance && submission.guests.some((guest) => guest.attending)
+          ? submission.firstDanceArtist
           : "",
         submission.dietary,
         submission.notes,

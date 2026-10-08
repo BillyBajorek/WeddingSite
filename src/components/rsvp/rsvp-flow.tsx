@@ -30,8 +30,8 @@ export function RsvpFlow() {
   const [invitation, setInvitation] = useState<Invitation | null>(null);
   const [answers, setAnswers] = useState<Record<number, Answer>>({});
   const [email, setEmail] = useState("");
-  const [songRequest, setSongRequest] = useState("");
   const [firstDanceSong, setFirstDanceSong] = useState("");
+  const [firstDanceArtist, setFirstDanceArtist] = useState("");
   const [dietary, setDietary] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
@@ -52,8 +52,8 @@ export function RsvpFlow() {
   function open(selected: Invitation) {
     setInvitation(selected);
     setAnswers(answersFor(selected));
-    setSongRequest(selected.songRequest);
     setFirstDanceSong(selected.firstDanceSong);
+    setFirstDanceArtist(selected.firstDanceArtist);
     setDietary(selected.dietary);
     setEmail("");
     setNotes("");
@@ -93,8 +93,8 @@ export function RsvpFlow() {
           name: answers[guest.id].name,
         })),
         email,
-        songRequest,
         firstDanceSong,
+        firstDanceArtist,
         dietary,
         notes,
       });
@@ -182,8 +182,11 @@ export function RsvpFlow() {
         <p className="rsvp-lede">
           {anyoneAttending ? rsvpCopy.thanksAttending : rsvpCopy.thanksDeclined}
         </p>
-        {invitation.firstDanceSong && (
-          <p className="rsvp-lede">First dance song: {invitation.firstDanceSong}</p>
+        {[invitation.firstDanceSong, invitation.firstDanceArtist].some(Boolean) && (
+          <p className="rsvp-lede">
+            First dance song:{" "}
+            {[invitation.firstDanceSong, invitation.firstDanceArtist].filter(Boolean).join(" — ")}
+          </p>
         )}
         <ul className="rsvp-summary">
           {invitation.guests.map((guest) => (
@@ -273,31 +276,35 @@ export function RsvpFlow() {
               />
             </div>
             {invitation.offerFirstDance && (
-              <div className="rsvp-field">
-                <label htmlFor="rsvp-first-dance">Your first dance song</label>
-                <input
-                  id="rsvp-first-dance"
-                  type="text"
-                  value={firstDanceSong}
-                  onChange={(event) => setFirstDanceSong(event.target.value)}
-                  placeholder="The song from your wedding"
-                />
+              <>
+                <div className="rsvp-grid">
+                  <div className="rsvp-field">
+                    <label htmlFor="rsvp-song-name">Song name</label>
+                    <input
+                      id="rsvp-song-name"
+                      type="text"
+                      value={firstDanceSong}
+                      onChange={(event) => setFirstDanceSong(event.target.value)}
+                      placeholder="At Last"
+                    />
+                  </div>
+                  <div className="rsvp-field">
+                    <label htmlFor="rsvp-artist">Artist name</label>
+                    <input
+                      id="rsvp-artist"
+                      type="text"
+                      value={firstDanceArtist}
+                      onChange={(event) => setFirstDanceArtist(event.target.value)}
+                      placeholder="Etta James"
+                    />
+                  </div>
+                </div>
                 <p className="rsvp-hint">
                   Optional. We may play it during cocktail hour, or as a slow dance later in the
                   night.
                 </p>
-              </div>
+              </>
             )}
-            <div className="rsvp-field">
-              <label htmlFor="rsvp-song">Song request</label>
-              <input
-                id="rsvp-song"
-                type="text"
-                value={songRequest}
-                onChange={(event) => setSongRequest(event.target.value)}
-                placeholder="A song that will get you on the dance floor"
-              />
-            </div>
           </>
         )}
         <div className="rsvp-field">

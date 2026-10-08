@@ -101,13 +101,10 @@ async function Responses() {
         <ul className="admin-parties">
           {parties.map((party) => {
             const names = party.guests.map((guest) => guest.name || "Guest").join(", ");
+            const dance = [party.firstDanceSong, party.firstDanceArtist].filter(Boolean).join(" — ");
             const extras = [
               ["Email", party.email],
-              [
-                "First dance",
-                party.offerFirstDance ? party.firstDanceSong || "Asked, no song yet" : "",
-              ],
-              ["Song", party.songRequest],
+              ["First dance", party.offerFirstDance ? dance || "Asked, no song yet" : ""],
               ["Dietary", party.dietary],
               ["Notes", party.notes],
             ].filter(([, value]) => value);
